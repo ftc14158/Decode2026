@@ -46,7 +46,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         grabServo = hardwareMap.get(Servo.class, "grab");
 
-        setWristPositionLevel(0);
+//        setWristPositionLevel(0);
 
     }
 

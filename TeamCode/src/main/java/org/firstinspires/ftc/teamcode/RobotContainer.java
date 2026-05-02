@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.commands.TrajectoryBuildCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.opmodes.AutonConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SlideConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -51,7 +52,8 @@ public class RobotContainer {
     private final MecanumDriveSubsystem m_drivetrain;
 
     // Other subsystems to come..
-    private final ArmSubsystem m_arm;
+  //  private final ArmSubsystem m_arm;
+    private final ShooterSubsystem m_shooter;
 
     public Map<String, Object> m_telemetryItems;
 
@@ -81,7 +83,9 @@ public class RobotContainer {
         m_gamepad1 = new GamepadEx(opMode.gamepad1);
         m_gamepad2 = new GamepadEx(opMode.gamepad2);
 
-        m_arm = new ArmSubsystem(hardwareMap, this);
+//        m_arm = new ArmSubsystem(hardwareMap, this);
+
+        m_shooter = new ShooterSubsystem(hardwareMap, this);
 
         m_drivetrain.setDefaultCommand( new RunCommand( () -> { m_drivetrain.stop(); m_drivetrain.update(); } , m_drivetrain ) );
 
@@ -94,8 +98,8 @@ public class RobotContainer {
         return m_gamepad2;
     }
     public MecanumDriveSubsystem getDrivetrain() { return m_drivetrain; }
-    public ArmSubsystem getArm() { return m_arm; }
-
+    public ArmSubsystem getArm() { return null; } // m_arm; }
+    public ShooterSubsystem getShooter() { return m_shooter; }
 
     public void addTelem(String name, Object value) {
         m_telemetryItems.put(name, value);
@@ -224,6 +228,28 @@ public class RobotContainer {
             this.robot = robot;
         }
 
+        public Command armToGround() { return new InstantCommand( () -> {} ); }
+
+        public Command homeSlide() { return new InstantCommand( () -> {} ); }
+        public Command armToCruise()  { return new InstantCommand( () -> {} ); }
+        public Command armToMax()  { return new InstantCommand( () -> {} ); }
+
+        public Command armToStartPos()  { return new InstantCommand( () -> {} ); }
+
+        public TrajectoryBuildCommand buildTraj(Function<TrajectorySequenceBuilder, TrajectorySequence> buildFunction) {
+            return new TrajectoryBuildCommand(robot.getDrivetrain(), buildFunction);
+        }
+
+        public InstantCommand openGrab()  { return new InstantCommand( () -> {} ); }
+        public InstantCommand closeGrab()  { return new InstantCommand( () -> {} ); }
+        public Command waitMillisecs(int ms) {
+            return new RunCommand( () -> {} ).withTimeout(ms);
+        }
+        public Command raiseOnePixelFromGround()  { return new InstantCommand( () -> {} ); }
+        public Command armToAprilTagScanPosition()  { return new InstantCommand( () -> {} ); }
+        public Command raiseOutandRelease()  { return new InstantCommand( () -> {} ); }
+
+    /*
         public Command armToGround() {
             return new ArmToGroundCommand(robot.getArm());
         }
@@ -238,14 +264,14 @@ public class RobotContainer {
         public Command armToCruise() {
             return new ArmToCruiseCommand(robot.getArm());
         }
-public Command armToMax() {
-    return new SequentialCommandGroup(
-            new InstantCommand( () -> robot.getArm().goToLevel(3) ),
-            new InstantCommand( () -> robot.getArm().setWristPositionLevel(3) ),
-            new InstantCommand( () -> robot.getArm().setSlidePosition( SlideConstants.SLIDE_MAX )),
-            new WaitUntilCommand( () -> robot.getArm().slideCloseToPos() )
-    );
-}
+        public Command armToMax() {
+            return new SequentialCommandGroup(
+                    new InstantCommand( () -> robot.getArm().goToLevel(3) ),
+                    new InstantCommand( () -> robot.getArm().setWristPositionLevel(3) ),
+                    new InstantCommand( () -> robot.getArm().setSlidePosition( SlideConstants.SLIDE_MAX )),
+                    new WaitUntilCommand( () -> robot.getArm().slideCloseToPos() )
+            );
+        }
 
         public Command armToStartPos() {
             return new ArmStartPositionCommand(robot.getArm());
@@ -296,6 +322,8 @@ public Command armToMax() {
                     );
 
         }
-
+    }
+  */
     }
 }
+

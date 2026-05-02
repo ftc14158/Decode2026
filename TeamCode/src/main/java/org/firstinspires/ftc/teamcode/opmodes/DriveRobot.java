@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.commands.RunCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmConstants;
 import org.firstinspires.ftc.teamcode.subsystems.SlideConstants;
 import org.firstinspires.ftc.teamcode.subsystems.WristConstants;
+import org.firstinspires.ftc.teamcode.subsystems.mechanism.ShooterConstants;
 
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.*;
 
@@ -42,18 +43,44 @@ public class DriveRobot extends CommandOpMode {
         robot = new RobotContainer( this );
 
         // Set arm position command
-     //   robot.getGamepad2().getGamepadButton(Button.X).whenPressed(
-     //           new InstantCommand( () -> robot.getArm().goToLevel(1) ) );
+        robot.getGamepad1().getGamepadButton(Button.SQUARE).whileHeld(
+                new InstantCommand( () -> robot.getShooter()
+                        .setFlywheelVelocity( ShooterConstants.FlywheelSpeed.SPEED_MAX) ) );
 
-     //   robot.getGamepad2().getGamepadButton(Button.Y).whenPressed(
+        robot.getGamepad1().getGamepadButton(Button.CIRCLE).whileHeld(
+                new InstantCommand( () -> robot.getShooter()
+                        .setFlywheelVelocity( ShooterConstants.FlywheelSpeed.SPEED_BANK) ) );
+
+        robot.getGamepad1().getGamepadButton(Button.CROSS).whileHeld(
+                new InstantCommand( () -> robot.getShooter()
+                        .setIntakePower(ShooterConstants.INTAKE_POWER_FORWARD) ) );
+
+        robot.getGamepad1().getGamepadButton(Button.TRIANGLE).whileHeld(
+                new InstantCommand( () -> robot.getShooter()
+                        .setIntakePower(ShooterConstants.INTAKE_POWER_REVERSE) ) );
+
+        robot.getGamepad1().getGamepadButton(Button.DPAD_LEFT).whileHeld(
+                new InstantCommand( () -> robot.getShooter()
+                        .setHopperPower(ShooterConstants.HOPPER_FORWARD) ) );
+
+        robot.getGamepad1().getGamepadButton(Button.DPAD_RIGHT).whileHeld(
+                new InstantCommand( () -> robot.getShooter()
+                        .setHopperPower(ShooterConstants.HOPPER_REVERSE) ) );
+
+        robot.getShooter().setDefaultCommand( new RunCommand( () ->
+            {
+                robot.getShooter().setFlywheelVelocity( ShooterConstants.FlywheelSpeed.OFF );
+            }, robot.getShooter() ) );
+
+        //   robot.getGamepad2().getGamepadButton(Button.Y).whenPressed(
      //           new InstantCommand( () -> robot.getArm().goToLevel(2) ) );
 
-        robot.getGamepad2().getGamepadButton(Button.Y).whenPressed(
-                new SequentialCommandGroup(
-                        new InstantCommand( () -> robot.getArm().goToLevel(3) ),
-                        new InstantCommand( () -> robot.getArm().setWristPositionLevel(3) ),
-                        new InstantCommand( () -> robot.getArm().setSlidePosition( SlideConstants.SLIDE_MAX )))
-        );
+//        robot.getGamepad2().getGamepadButton(Button.Y).whenPressed(
+//                new SequentialCommandGroup(
+//                        new InstantCommand( () -> robot.getArm().goToLevel(3) ),
+//                        new InstantCommand( () -> robot.getArm().setWristPositionLevel(3) ),
+//                        new InstantCommand( () -> robot.getArm().setSlidePosition( SlideConstants.SLIDE_MAX )))
+//        );
 
 //        robot.getGamepad1().getGamepadButton(Button.BACK).whileHeld(
 //                        new InstantCommand( () -> robot.getArm().hoist() )
@@ -65,48 +92,48 @@ public class DriveRobot extends CommandOpMode {
 //                        new InstantCommand( () -> robot.getArm().setWristPositionLevel(0) ),
 //                       new InstantCommand( () -> robot.getArm().goToLevel(0) ) ) );
 
-        robot.getGamepad2().getGamepadButton(Button.LEFT_BUMPER).whenPressed(
-                new InstantCommand( () -> robot.getArm().setGrab(true) ) );
-        robot.getGamepad2().getGamepadButton(Button.RIGHT_BUMPER).whenPressed(
-                new InstantCommand( () -> robot.getArm().setGrab(false)) );
+//        robot.getGamepad2().getGamepadButton(Button.LEFT_BUMPER).whenPressed(
+//                new InstantCommand( () -> robot.getArm().setGrab(true) ) );
+//        robot.getGamepad2().getGamepadButton(Button.RIGHT_BUMPER).whenPressed(
+//                new InstantCommand( () -> robot.getArm().setGrab(false)) );
 
 
-        robot.getGamepad2().getGamepadButton(Button.DPAD_DOWN).whenPressed(
-                new InstantCommand( () -> robot.getArm().nudgePosition(-ArmConstants.NUDGE_DEGREES) ) );
-        robot.getGamepad2().getGamepadButton(Button.DPAD_UP).whenPressed(
-                new InstantCommand( () -> robot.getArm().nudgePosition(ArmConstants.NUDGE_DEGREES) ) );
-        robot.getGamepad2().getGamepadButton(Button.DPAD_LEFT).whenPressed(
-                new InstantCommand( () -> robot.getArm().nudgeSlidePosition(-SlideConstants.SLIDE_PIXEL_HEIGHT) ) );
-        robot.getGamepad2().getGamepadButton(Button.DPAD_RIGHT).whenPressed(
-                new InstantCommand( () -> robot.getArm().nudgeSlidePosition(SlideConstants.SLIDE_PIXEL_HEIGHT) ) );
-
-        robot.getGamepad2().getGamepadButton(Button.LEFT_STICK_BUTTON).whenPressed(
-                new InstantCommand( () -> robot.getArm().nudgeWristPosition(-WristConstants.NUDGE_DEGREES) ) );
-        robot.getGamepad2().getGamepadButton(Button.RIGHT_STICK_BUTTON).whenPressed(
-                new InstantCommand( () -> robot.getArm().nudgeWristPosition(WristConstants.NUDGE_DEGREES) ) );
+//        robot.getGamepad2().getGamepadButton(Button.DPAD_DOWN).whenPressed(
+//                new InstantCommand( () -> robot.getArm().nudgePosition(-ArmConstants.NUDGE_DEGREES) ) );
+//        robot.getGamepad2().getGamepadButton(Button.DPAD_UP).whenPressed(
+//                new InstantCommand( () -> robot.getArm().nudgePosition(ArmConstants.NUDGE_DEGREES) ) );
+//        robot.getGamepad2().getGamepadButton(Button.DPAD_LEFT).whenPressed(
+//                new InstantCommand( () -> robot.getArm().nudgeSlidePosition(-SlideConstants.SLIDE_PIXEL_HEIGHT) ) );
+//        robot.getGamepad2().getGamepadButton(Button.DPAD_RIGHT).whenPressed(
+//                new InstantCommand( () -> robot.getArm().nudgeSlidePosition(SlideConstants.SLIDE_PIXEL_HEIGHT) ) );
+//
+//        robot.getGamepad2().getGamepadButton(Button.LEFT_STICK_BUTTON).whenPressed(
+//                new InstantCommand( () -> robot.getArm().nudgeWristPosition(-WristConstants.NUDGE_DEGREES) ) );
+//        robot.getGamepad2().getGamepadButton(Button.RIGHT_STICK_BUTTON).whenPressed(
+//                new InstantCommand( () -> robot.getArm().nudgeWristPosition(WristConstants.NUDGE_DEGREES) ) );
 
         //       robot.getGamepad2().getGamepadButton(Button.LEFT_STICK_BUTTON).whenPressed(
  //               new InstantCommand( () -> robot.getArm().setWristPositionLevel(0) ) );
  //       robot.getGamepad2().getGamepadButton(Button.RIGHT_STICK_BUTTON).whenPressed(
  //               new InstantCommand( () -> robot.getArm().setWristPositionLevel(1)) );
 
-        robot.getGamepad2().getGamepadButton(Button.A).whenPressed(
+//        robot.getGamepad2().getGamepadButton(Button.A).whenPressed(
+//
+//                new SequentialCommandGroup(
+//                        new InstantCommand( () -> robot.getArm().grabOpen(), robot.getArm()),
+//                        new ArmToGroundCommand( robot.getArm() ),
+//        new WaitUntilCommand(  () -> robot.getArm().slideIdle() )
+//            )
+//        )
+//        ;
 
-                new SequentialCommandGroup(
-                        new InstantCommand( () -> robot.getArm().grabOpen(), robot.getArm()),
-                        new ArmToGroundCommand( robot.getArm() ),
-        new WaitUntilCommand(  () -> robot.getArm().slideIdle() )
-            )
-        )
-        ;
-
-        robot.getGamepad2().getGamepadButton(Button.X).whenPressed(
-
-                new SequentialCommandGroup(
-                        new RunCommand( () -> robot.getArm().grabClose(), robot.getArm()).withTimeout(500),
-                new ArmToCruiseCommand( robot.getArm() )
-                )
-        );
+//        robot.getGamepad2().getGamepadButton(Button.X).whenPressed(
+//
+//                new SequentialCommandGroup(
+//                        new RunCommand( () -> robot.getArm().grabClose(), robot.getArm()).withTimeout(500),
+//                new ArmToCruiseCommand( robot.getArm() )
+//                )
+//        );
 
  //       robot.getGamepad1().getGamepadButton(Button.Y).whenPressed//(
 
@@ -118,10 +145,10 @@ public class DriveRobot extends CommandOpMode {
    //             )
    //     );
 
-        robot.getGamepad2().getGamepadButton(Button.B).whenPressed(
-
-                new ArmStartPositionCommand(  robot.getArm() )
-        );
+//        robot.getGamepad2().getGamepadButton(Button.B).whenPressed(
+//
+//                new ArmStartPositionCommand(  robot.getArm() )
+//        );
 
    //     robot.getGamepad1().getGamepadButton(Button.START).whenPressed(
 //                new LaunchDroneCommand(robot.getDroneSubsystem()).withTimeout(3000)
