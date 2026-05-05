@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.controller.PIDFController;
+import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.subsystems.mechanism.ShooterConstants;
@@ -14,68 +13,81 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanism.ShooterConstants.Flyw
 public class ShooterSubsystem extends SubsystemBase {
 
     private RobotContainer robot;
-    private DcMotor flywheel;
-    private DcMotor coreHex;
+    private MotorEx flywheel;
+    private MotorEx coreHex;
     private CRServo servo;
-    private static final int bankVelocity = 1300;
-    private static final int farVelocity = 1900;
-    private static final int maxVelocity = 2200;
-    private ElapsedTime autoDriveTimer = new ElapsedTime();
+
+    private PIDFController pidController;
+    private double targetVelocity = 0.0;
+    private double intakePower = 0.0;
+    private double hopperPower = 0.0;
 
     public ShooterSubsystem(HardwareMap hardwareMap, RobotContainer robot) {
-
         this.robot = robot;
-        flywheel = hardwareMap.get(DcMotor.class, "flywheel");
-        coreHex = hardwareMap.get(DcMotor.class, "coreHex");
+
+        flywheel = new MotorEx(hardwareMap, "flywheel");
+        coreHex = new MotorEx(hardwareMap, "coreHex");
         servo = hardwareMap.get(CRServo.class, "servo");
 
-        // Establishing the direction and mode for the motors
-        flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        flywheel.setDirection(DcMotor.Direction.REVERSE);
+        flywheel.setInverted(true);
+        flywheel.setRunMode(MotorEx.RunMode.RawPower);
 
-        coreHex.setDirection(DcMotor.Direction.REVERSE);
-        //Ensures the servo is active and ready
+        coreHex.setInverted(true);
+        coreHex.setRunMode(MotorEx.RunMode.RawPower);
+
         servo.setPower(0);
 
+        pidController = new PIDFController(
+                ShooterConstants.FLYWHEEL_KP,
+                ShooterConstants.FLYWHEEL_KI,
+                ShooterConstants.FLYWHEEL_KD,
+                ShooterConstants.FLYWHEEL_KF
+        );
     }
 
-    /**
-     * Manual control for the Core Hex powered feeder and the agitator servo in the hopper
-     */
-
-    // servo = hopper agitator
     public void setHopperPower(double power) {
-        servo.setPower(power);
+        this.hopperPower = power;
     }
 
     public void setIntakePower(double power) {
-        coreHex.setPower(power);
+        this.intakePower = power;
     }
 
-
-    /**
-     * This if/else statement contains the controls for the flywheel, both manual and auto.
-     * Circle and Square will spin up ONLY the flywheel to the target velocity set.
-     * The bumpers will activate the flywheel, Core Hex feeder, and servo to cycle a series of balls.
-     */
     public void setFlywheelVelocity(FlywheelSpeed sp) {
         switch(sp) {
             case SPEED_BANK:
-                flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                ((DcMotorEx) flywheel).setVelocity(ShooterConstants.SPEED_BANK);
+                targetVelocity = ShooterConstants.SPEED_BANK;
                 break;
             case SPEED_FAR:
-                flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                ((DcMotorEx) flywheel).setVelocity(ShooterConstants.SPEED_FAR);
+                targetVelocity = ShooterConstants.SPEED_FAR;
+                break;
             case SPEED_MAX:
-                flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                ((DcMotorEx) flywheel).setPower(1);
-
+                targetVelocity = 2200;
+                break;
+            case OFF:
             default:
-                ((DcMotorEx) flywheel).setVelocity(0);
-                coreHex.setPower(0);
-                servo.setPower(0);
-            }
+                targetVelocity = 0;
+                break;
         }
     }
 
+    public boolean atTargetVelocity() {
+        if (targetVelocity == 0) return true;
+        return Math.abs(flywheel.getVelocity() - targetVelocity) < ShooterConstants.FLYWHEEL_TOLERANCE;
+    }
+
+    @Override
+    public void periodic() {
+        // 1. Calculate Flywheel PID
+        if (targetVelocity == 0) {
+            flywheel.set(0);
+        } else {
+            double power = pidController.calculate(flywheel.getVelocity(), targetVelocity);
+            flywheel.set(power);
+        }
+        
+        // 2. Continuously apply intake & hopper states (solves the power loss issue)
+        coreHex.set(intakePower);
+        servo.setPower(hopperPower);
+    }
+}

@@ -42,35 +42,30 @@ public class DriveRobot extends CommandOpMode {
         // Start
         robot = new RobotContainer( this );
 
-        // Set arm position command
-        robot.getGamepad1().getGamepadButton(Button.SQUARE).whileHeld(
-                new InstantCommand( () -> robot.getShooter()
-                        .setFlywheelVelocity( ShooterConstants.FlywheelSpeed.SPEED_MAX) ) );
+        robot.getGamepad1().getGamepadButton(Button.SQUARE)
+                .whenPressed(new InstantCommand(() -> robot.getShooter().setFlywheelVelocity(ShooterConstants.FlywheelSpeed.SPEED_MAX)))
+                .whenReleased(new InstantCommand(() -> robot.getShooter().setFlywheelVelocity(ShooterConstants.FlywheelSpeed.OFF)));
 
-        robot.getGamepad1().getGamepadButton(Button.CIRCLE).whileHeld(
-                new InstantCommand( () -> robot.getShooter()
-                        .setFlywheelVelocity( ShooterConstants.FlywheelSpeed.SPEED_BANK) ) );
+        robot.getGamepad1().getGamepadButton(Button.CIRCLE)
+                .whenPressed(new InstantCommand(() -> robot.getShooter().setFlywheelVelocity(ShooterConstants.FlywheelSpeed.SPEED_BANK)))
+                .whenReleased(new InstantCommand(() -> robot.getShooter().setFlywheelVelocity(ShooterConstants.FlywheelSpeed.OFF)));
 
-        robot.getGamepad1().getGamepadButton(Button.CROSS).whileHeld(
-                new InstantCommand( () -> robot.getShooter()
-                        .setIntakePower(ShooterConstants.INTAKE_POWER_FORWARD) ) );
+        robot.getGamepad1().getGamepadButton(Button.CROSS)
+                .whenPressed(new InstantCommand(() -> robot.getShooter().setIntakePower(ShooterConstants.INTAKE_POWER_FORWARD)))
+                .whenReleased(new InstantCommand(() -> robot.getShooter().setIntakePower(0)));
 
-        robot.getGamepad1().getGamepadButton(Button.TRIANGLE).whileHeld(
-                new InstantCommand( () -> robot.getShooter()
-                        .setIntakePower(ShooterConstants.INTAKE_POWER_REVERSE) ) );
+        robot.getGamepad1().getGamepadButton(Button.TRIANGLE)
+                .whenPressed(new InstantCommand(() -> robot.getShooter().setIntakePower(ShooterConstants.INTAKE_POWER_REVERSE)))
+                .whenReleased(new InstantCommand(() -> robot.getShooter().setIntakePower(0)));
 
-        robot.getGamepad1().getGamepadButton(Button.DPAD_LEFT).whileHeld(
-                new InstantCommand( () -> robot.getShooter()
-                        .setHopperPower(ShooterConstants.HOPPER_FORWARD) ) );
+        robot.getGamepad1().getGamepadButton(Button.DPAD_LEFT)
+                .whenPressed(new InstantCommand(() -> robot.getShooter().setHopperPower(ShooterConstants.HOPPER_FORWARD)))
+                .whenReleased(new InstantCommand(() -> robot.getShooter().setHopperPower(0)));
 
-        robot.getGamepad1().getGamepadButton(Button.DPAD_RIGHT).whileHeld(
-                new InstantCommand( () -> robot.getShooter()
-                        .setHopperPower(ShooterConstants.HOPPER_REVERSE) ) );
+        robot.getGamepad1().getGamepadButton(Button.DPAD_RIGHT)
+                .whenPressed(new InstantCommand(() -> robot.getShooter().setHopperPower(ShooterConstants.HOPPER_REVERSE)))
+                .whenReleased(new InstantCommand(() -> robot.getShooter().setHopperPower(0)));
 
-        robot.getShooter().setDefaultCommand( new RunCommand( () ->
-            {
-                robot.getShooter().setFlywheelVelocity( ShooterConstants.FlywheelSpeed.OFF );
-            }, robot.getShooter() ) );
 
         //   robot.getGamepad2().getGamepadButton(Button.Y).whenPressed(
      //           new InstantCommand( () -> robot.getArm().goToLevel(2) ) );
