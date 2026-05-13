@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode.opmodes.myopmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 @Autonomous(name = "AutonomousTest")
-public class AutonomousTest extends OpMode {
-
-    private DcMotor dcMotor;
+public class AutonomousTest extends LinearOpMode {
 
     private RobotContainer robot;
+
+    private DcMotor dcMotor;
 
     private DcMotor leftFront;
 
@@ -24,7 +24,7 @@ public class AutonomousTest extends OpMode {
 
     private CRServo crServo;
 
-    public void init() {
+    public void runOpMode() {
        dcMotor = hardwareMap.get(DcMotor.class, "dcMotor");
        robot = hardwareMap.get(RobotContainer.class, "robot");
        crServo = hardwareMap.get(CRServo.class, "crServo");
@@ -32,12 +32,14 @@ public class AutonomousTest extends OpMode {
        leftRear = hardwareMap.get(DcMotor.class, "leftRear");
        rightRear = hardwareMap.get(DcMotor.class, "rightRear");
        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-    }
+       waitForStart();
 
-    public void loop() {
-        if (gamepad1.a) {
-            dcMotor.setPower(1);
-            crServo.setPower(1);
-        }
+       crServo.setPower(1);
+       dcMotor.setPower(1);
+
+       sleep(3000);
+
+       crServo.setPower(0);
+       dcMotor.setPower(0);
     }
 }

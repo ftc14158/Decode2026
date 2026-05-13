@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name = "test6")
-public class Test6 extends OpMode {
+public abstract class Test6 extends OpMode {
 
     private DcMotor dcMotor;
 
@@ -20,8 +20,8 @@ public class Test6 extends OpMode {
 
     private DcMotor testMotor2;
 
-    @Override
-    public void init() {
+
+    public void initialize() {
         dcMotor = hardwareMap.get(DcMotor.class, "testMotor");
         crServo = hardwareMap.get(CRServo.class, "crServo");
         standardServo = hardwareMap.get(Servo.class, "standardServo");
