@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmodes.myopmodes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Autonomous(name = "Test8")
-public abstract class Test8 extends LinearOpMode {
+@TeleOp(name = "Test8")
+public class Test8 extends OpMode {
 
-    @Override
-    public void runOpMode(){
+    public void init(){
+
+    }
+
+    public void loop(){
 
     }
 }

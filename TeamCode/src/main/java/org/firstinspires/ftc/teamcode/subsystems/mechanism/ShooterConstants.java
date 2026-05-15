@@ -11,8 +11,13 @@ public class ShooterConstants {
         SPEED_MAX,
         OFF };
 
-    public static final double SPEED_BANK = 1300;
-    public static final double SPEED_FAR = 1900;
+    public static double K_P = 110.0; // 10.0;
+    public static double K_I = 0;
+    public static double K_D = 5.0; // 0.0;
+    public static double K_F = 12.0; // 20.0;
+
+    public static double SPEED_BANK = 1300;
+    public static double SPEED_FAR = 1400;
 
     public static final double INTAKE_POWER_FORWARD = 0.5;
     public static final double INTAKE_POWER_REVERSE = -0.5;

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.PerpetualCommand;
+import com.seattlesolvers.solverslib.command.RepeatCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.commands.ArmToGroundCommand;
 import org.firstinspires.ftc.teamcode.commands.LaunchDroneCommand;
 import org.firstinspires.ftc.teamcode.commands.MecanumDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.RunCommand;
+import org.firstinspires.ftc.teamcode.commands.ShootBallCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ArmConstants;
 import org.firstinspires.ftc.teamcode.subsystems.SlideConstants;
 import org.firstinspires.ftc.teamcode.subsystems.WristConstants;
@@ -60,12 +62,19 @@ public class DriveRobot extends CommandOpMode {
                         .setIntakePower(ShooterConstants.INTAKE_POWER_REVERSE) ) );
 
         robot.getGamepad1().getGamepadButton(Button.DPAD_LEFT).whileHeld(
-                new InstantCommand( () -> robot.getShooter()
-                        .setHopperPower(ShooterConstants.HOPPER_FORWARD) ) );
+                new InstantCommand( robot.getShooter()::setHopperOpen
+                         ) );
 
         robot.getGamepad1().getGamepadButton(Button.DPAD_RIGHT).whileHeld(
-                new InstantCommand( () -> robot.getShooter()
-                        .setHopperPower(ShooterConstants.HOPPER_REVERSE) ) );
+                new InstantCommand( robot.getShooter()::setHopperClosed
+                         ) );
+
+        robot.getGamepad1().getGamepadButton(Button.LEFT_BUMPER).toggleWhenPressed(
+                new RepeatCommand(
+                new ShootBallCommand( robot.getShooter() )
+                )
+        );
+
 
         robot.getShooter().setDefaultCommand( new RunCommand( () ->
             {
@@ -165,7 +174,9 @@ public class DriveRobot extends CommandOpMode {
 
         schedule(new RunCommand(() -> {
             robot.getDrivetrain().update();
-            // telemetry.addData("Pose", robot.getDrivetrain().getPoseEstimate())
+            robot.addTelem("Target Velocity", robot.getShooter().getTargetVelocity() );
+            robot.addTelem("Velocity", robot.getShooter().getVelocity() );
+            robot.addTelem("At velocity", robot.getShooter().atSpeed() );
             telemetry.update();
         }));
 

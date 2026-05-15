@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -14,28 +15,31 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanism.ShooterConstants.Flyw
 public class ShooterSubsystem extends SubsystemBase {
 
     private RobotContainer robot;
-    private DcMotor flywheel;
+    private DcMotorEx flywheel;
     private DcMotor coreHex;
-    private CRServo servo;
+    private Servo servo;
+    private double targetVelocity = 0;
     private static final int bankVelocity = 1300;
-    private static final int farVelocity = 1900;
+    private static final int farVelocity = 2000;
     private static final int maxVelocity = 2200;
     private ElapsedTime autoDriveTimer = new ElapsedTime();
 
     public ShooterSubsystem(HardwareMap hardwareMap, RobotContainer robot) {
 
         this.robot = robot;
-        flywheel = hardwareMap.get(DcMotor.class, "flywheel");
+        flywheel = (DcMotorEx) hardwareMap.get(DcMotor.class, "flywheel");
         coreHex = hardwareMap.get(DcMotor.class, "coreHex");
-        servo = hardwareMap.get(CRServo.class, "servo");
+        servo = hardwareMap.get(Servo.class, "servo");
 
         // Establishing the direction and mode for the motors
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setDirection(DcMotor.Direction.REVERSE);
-
+        flywheel.setVelocityPIDFCoefficients(ShooterConstants.K_P,ShooterConstants.K_I,
+                ShooterConstants.K_D,ShooterConstants.K_F);
         coreHex.setDirection(DcMotor.Direction.REVERSE);
         //Ensures the servo is active and ready
-        servo.setPower(0);
+        servo.setDirection(Servo.Direction.REVERSE);
+        setHopperClosed();
 
     }
 
@@ -45,14 +49,38 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // servo = hopper agitator
     public void setHopperPower(double power) {
-        servo.setPower(power);
+        servo.setPosition(power);
     }
 
+    public void setHopperOpen() {
+        servo.setPosition(0);
+    }
+
+    public void setHopperClosed() {
+        servo.setPosition(0.65);
+    }
     public void setIntakePower(double power) {
         coreHex.setPower(power);
     }
 
+    public boolean atSpeed() {
+        return (targetVelocity > 0)
+           &&  ( (flywheel.getVelocity() / targetVelocity) > 0.98 );
+    }
 
+    private void setTargetVelocity(double velocity) {
+        if (targetVelocity != velocity) {
+            flywheel.setVelocityPIDFCoefficients(ShooterConstants.K_P,ShooterConstants.K_I,
+                    ShooterConstants.K_D,ShooterConstants.K_F);
+            targetVelocity = velocity;
+            flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            flywheel.setVelocity(velocity);
+        }
+    }
+
+    public double getTargetVelocity() {
+        return targetVelocity;
+    }
     /**
      * This if/else statement contains the controls for the flywheel, both manual and auto.
      * Circle and Square will spin up ONLY the flywheel to the target velocity set.
@@ -61,21 +89,26 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setFlywheelVelocity(FlywheelSpeed sp) {
         switch(sp) {
             case SPEED_BANK:
-                flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                ((DcMotorEx) flywheel).setVelocity(ShooterConstants.SPEED_BANK);
+                setTargetVelocity(ShooterConstants.SPEED_BANK);
                 break;
             case SPEED_FAR:
-                flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                ((DcMotorEx) flywheel).setVelocity(ShooterConstants.SPEED_FAR);
+                setTargetVelocity(ShooterConstants.SPEED_FAR);
+                break;
             case SPEED_MAX:
                 flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                targetVelocity = 0;
                 ((DcMotorEx) flywheel).setPower(1);
 
             default:
-                ((DcMotorEx) flywheel).setVelocity(0);
+                flywheel.setVelocity(0);
+                targetVelocity = 0;
                 coreHex.setPower(0);
-                servo.setPower(0);
+                // servo.setPosition(0);
             }
+        }
+
+        public double getVelocity() {
+            return flywheel.getVelocity();
         }
     }
 

@@ -7,8 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.teamcode.RobotContainer;
+
 @TeleOp(name = "test6")
 public abstract class Test6 extends OpMode {
+
+    private RobotContainer robot;
 
     private DcMotor dcMotor;
 
@@ -18,15 +22,13 @@ public abstract class Test6 extends OpMode {
 
     private TouchSensor touchSensor;
 
-    private DcMotor testMotor2;
-
 
     public void initialize() {
         dcMotor = hardwareMap.get(DcMotor.class, "testMotor");
         crServo = hardwareMap.get(CRServo.class, "crServo");
         standardServo = hardwareMap.get(Servo.class, "standardServo");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        testMotor2 = hardwareMap.get(DcMotor.class, "testMotor2");
+        robot = hardwareMap.get(RobotContainer.class, "robot");
     }
 
     public void loop() {
@@ -83,7 +85,7 @@ public abstract class Test6 extends OpMode {
         }
 
         if (gamepad1.right_trigger_pressed) {
-            testMotor2.setPower(1);
+            robot.getGamepad1();
         }
 
         while (gamepad1.startWasPressed()) {
