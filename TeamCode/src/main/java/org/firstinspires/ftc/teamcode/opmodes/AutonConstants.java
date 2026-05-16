@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class AutonConstants {
 
+    public static int DELAYSTART_SECS = 10;
+
     public static double APRILTAG_KY = 0.06; // 0.07;
     public static double APRILTAG_KX = 0.06; // 0.1;
     public static double APRILTAG_CLAMP = 0.3;

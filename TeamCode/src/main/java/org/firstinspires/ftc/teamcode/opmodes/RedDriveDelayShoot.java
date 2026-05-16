@@ -58,7 +58,7 @@ public class RedDriveDelayShoot extends CommandOpMode {
 
         // schedule a command to decide what further commands to schedule...
         //schedule(new AutoPlanCommand(robot, visionProcessor1, forceColor, forceBackstage, leftSlot));
-        schedule(new AutoDriveShootCommand(robot, TeamPropDetector.AllianceColor.RED, 10 ));
+        schedule(new AutoDriveShootCommand(robot, TeamPropDetector.AllianceColor.RED, AutonConstants.DELAYSTART_SECS ));
     }
 
     // Before reset at end of run, save current pose
