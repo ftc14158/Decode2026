@@ -9,12 +9,11 @@ import com.seattlesolvers.solverslib.command.RunCommand;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.commands.AutoBasketCommand;
 import org.firstinspires.ftc.teamcode.commands.AutoDriveShootCommand;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
-@Autonomous(name="BlueDriveShoot", preselectTeleOp = "Drive Robot")
-public class BlueDriveShoot extends CommandOpMode {
+@Autonomous(name="BlueDelayDriveShoot", preselectTeleOp = "Drive Robot")
+public class BlueDriveDelayShoot extends CommandOpMode {
     private RobotContainer robot = null;
 
     private TeamPropDetector visionProcessor1;
@@ -59,7 +58,7 @@ public class BlueDriveShoot extends CommandOpMode {
 
         // schedule a command to decide what further commands to schedule...
         //schedule(new AutoPlanCommand(robot, visionProcessor1, forceColor, forceBackstage, leftSlot));
-        schedule(new AutoDriveShootCommand(robot, TeamPropDetector.AllianceColor.BLUE, 0 ));
+        schedule(new AutoDriveShootCommand(robot, TeamPropDetector.AllianceColor.BLUE, 10 ));
     }
 
     // Before reset at end of run, save current pose

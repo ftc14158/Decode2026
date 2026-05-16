@@ -42,16 +42,17 @@ public class AutoDriveShootCommand extends CommandBase {
 
     private TeamPropDetector.AllianceColor forceColor = null;
     private Boolean forceBackstage = null;
+    private int delaySeconds = 0;
     private boolean leftSlot;  // aim for left slot above april tag
 
     private static double TILE_WIDTH = 23.5;
     private static double TAPE_WIDTH = 15d/16d;
 
     public AutoDriveShootCommand(RobotContainer robot,
-                                 TeamPropDetector.AllianceColor forceColor) {
+                                 TeamPropDetector.AllianceColor forceColor, int delaySeconds) {
         this.robot = robot;
-
         this.forceColor = forceColor;
+        this.delaySeconds = delaySeconds;
 
         // nobody else starts this this command finishes.
         addRequirements(robot.getDrivetrain(), robot.getShooter());
@@ -107,6 +108,7 @@ public class AutoDriveShootCommand extends CommandBase {
             // Schedule commands to run the route..
             CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
+                        cmd.waitMillisecs( 10 + delaySeconds * 1000),
                         robotToSample1,
 
                         // close  the grab once at the sample
